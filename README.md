@@ -30,13 +30,13 @@ We can begin clustering now, but we don't know the optimal target number of clus
 We use GaussianMixture, mainly because it doesn't assume, the variances in each cluster are the same.
 Therefore it can easily differentiate between the letters 'c' and 'e', something KMeans couldn't do.
 
-We measure a silhouette score in the `range(10, 81, 5)` and pick the index `i` that returns the largest silhouette score. 
+We measure a silhouette score in the `range(10, 61, 5)` and pick the index `i` that returns the largest silhouette score. 
 Then we look closer on the neighborhood of `i`: $[i - 5, i + 5]$. We pick the value from this neighborhood, which has the largest silhouette score.
 
 We perform clustering with the picked value and that's our result.
 
 ## Expected time to run
-
+Approximately 4 minutes on a good laptop.
 
 ## Custom options
 No custom options.
