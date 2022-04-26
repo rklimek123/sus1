@@ -36,7 +36,7 @@ def trim_whitespace(raw_imgs):
         max_height = max(max_height, height)
 
         cropped_images.append(crop)
-    return cropped_images, (max_height, max_width)
+    return cropped_images, (min(100, max_height), min(100, max_width))
 
 
 def cluster(raw_imgs):
@@ -61,7 +61,7 @@ def cluster(raw_imgs):
     # Clustering: finidng the optimal n_components
     sil_scores_kmeans = []
 
-    begin1 = 10
+    begin1 = 20
     end1 = 60
     step1 = 5
 
@@ -96,18 +96,63 @@ def cluster(raw_imgs):
     return predX
 
 
+def create_txt_report(filenames, pred):
+    n = pred.size
+    ids = np.arange(0, n)
+    report = ""
+
+    for cluster in np.unique(pred):
+        fnames = np.asarray(filenames)[ids[pred == cluster]]
+        fline = " ".join(fnames) + "\n"
+        report += fline
+
+    with open("sus1.txt", "w") as f:
+        f.write(report)
+
+
+def create_html_report(img_paths, pred):
+    n = pred.size
+    ids = np.arange(0, n)
+    report = "<html><head><title>Characters clustering</title></head><body>"
+
+    for cluster in np.unique(pred):
+        fnames = np.asarray(img_paths)[ids[pred == cluster]]
+
+        report += "<div>"
+
+        for fname in fnames:
+            report += "<img src=\"" + fname + "\"/>"
+
+        report += "</div><hr/>\n"
+
+    report += "</body></html>"
+
+    with open("sus1.html", "w") as f:
+        f.write(report)
+
+
 if __name__ == "__main__":
     argc = len(sys.argv)
-    if argc != 1:
+    if argc != 2:
         print("Usage: python3", sys.argv[0], "<list_of_images_to_cluster>")
+        exit(1)
 
     raw_imgs = []
+    filenames = []
+    fullfilenames = []
 
     with open(sys.argv[1], "r") as f:
         for line in f:
-            img = cv.imread(line.strip())
+            l = line.strip()
+            img = cv.imread(l)
             img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
             raw_imgs.append(img)
 
+            _, fname = os.path.split(l)
+            filenames.append(fname)
+            fullfilenames.append(l)
+
     predX = cluster(raw_imgs)
+    create_txt_report(filenames, predX)
+    create_html_report(fullfilenames, predX)
 
