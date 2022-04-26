@@ -46,3 +46,5 @@ No custom options.
 2. Inside the main repository directory, run setup.sh
 3. Activate the environment, `source env/bin/activate`
 4. Run Python3 with the filelist containing the characters: e.g. `python3 main.py sample_filelist.txt`
+
+The script should create two output files: `sus1.txt` and `sus1.html`.
